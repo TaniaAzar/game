@@ -10,6 +10,8 @@ public class Hero implements Drawable, Updatable{
     private double y;
     private BufferedImage image;//изображение персонажа
 
+    private final double SWIM_MODIFIER = 0.2;
+
     private byte verticalMovement;
     private byte horizontalMovement;
 
@@ -53,8 +55,16 @@ public class Hero implements Drawable, Updatable{
 
         double nextX = this.x;
         double nextY = this.y;
-        double delta = maxMovementSpeed * time;
 
+        double centerX = this.x + width / 2;
+        double centerY = this.y + height / 2;
+
+        double speed = maxMovementSpeed;
+        if (checkPointIsSwimable(centerX,centerY)){
+            speed *= SWIM_MODIFIER;
+        }
+
+        double delta = speed * time;
         if (horizontalMovement == 0){
             switch (verticalMovement){
                 case -1:
@@ -97,24 +107,19 @@ public class Hero implements Drawable, Updatable{
                     break;
             }
         }
-
-        if (nextX >= 0 && nextX < gameMap.getPixelWidth() - width){
             double upY = nextY;
             double downY = nextY + height;
             double leftX = nextX;
             double rightX = nextX + width;
 
-            if((checkPointInMap(leftX, upY) && checkPointIsWalkable(leftX, upY)) &&
-                    (checkPointInMap(rightX, upY) && checkPointIsWalkable(rightX, upY)) &&
-                    (checkPointInMap(leftX, downY) && checkPointIsWalkable(leftX, downY)) &&
-                    (checkPointInMap(rightX, downY) && checkPointIsWalkable(rightX, downY))){
+            if((checkPointInMap(leftX, upY) && (checkPointIsWalkable(leftX, upY) || checkPointIsSwimable(leftX, upY))) &&
+                    (checkPointInMap(rightX, upY) && (checkPointIsWalkable(rightX, upY) || checkPointIsSwimable(rightX, upY))) &&
+                    (checkPointInMap(leftX, downY) && (checkPointIsWalkable(leftX, downY) || checkPointIsSwimable(leftX, downY))) &&
+                    (checkPointInMap(rightX, downY) && (checkPointIsWalkable(rightX, downY) || checkPointIsSwimable(rightX, downY)))){
                 this.x = nextX;
+                this.y = nextY;
             }
         }
-        if (nextY >= 0 && nextY < gameMap.getPixelHeight() - height){
-            this.y = nextY;
-        }
-    }
 
     private boolean checkPointInMap(double x, double y){
         int j = (int)(x / gameMap.CELL_WIDTH);
@@ -134,7 +139,15 @@ public class Hero implements Drawable, Updatable{
         int i = (int)(y / gameMap.CELL_HEIGHT);
 
         int type = gameMap.getCell(i, j).getType();
-        return gameMap.getType(type).isWalkable() || gameMap.getType(type).isSwimmable();
+        return gameMap.getType(type).isWalkable();
+    }
+
+    private boolean checkPointIsSwimable(double x, double y) {
+        int j = (int)(x / gameMap.CELL_WIDTH);
+        int i = (int)(y / gameMap.CELL_HEIGHT);
+
+        int type = gameMap.getCell(i, j).getType();
+        return gameMap.getType(type).isSwimmable();
     }
 
     public void setVerticalMovement(byte verticalMovement) {

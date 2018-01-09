@@ -22,7 +22,7 @@ public class MainGameFrame extends JFrame {
 
     private long prevTime;
     private BufferedImage heroImage;
-    private long TIME_TICK = 1000 / 30;
+    private long TIME_TICK = 1000 / 100;
     private Timer timer;
     private Game game;
 
