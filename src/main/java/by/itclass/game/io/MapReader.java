@@ -20,7 +20,7 @@ public class MapReader {
         this.file = file;
     }
 
-    public GameMap read(){
+    public GameMap read(TileImageLoader loader){
 
         GameMap gameMap;
         try {
@@ -34,7 +34,7 @@ public class MapReader {
             int height = Integer.parseInt(parts[0]);
             int width = Integer.parseInt(parts[1]);
 
-            gameMap = new GameMap(width,height);
+            gameMap = new GameMap(width,height,loader);
 
             for (int i = 0; i < height; i++) {
                 line = bufferedReader.readLine();

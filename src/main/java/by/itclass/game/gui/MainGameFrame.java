@@ -21,6 +21,7 @@ import java.util.Timer;
 
 public class MainGameFrame extends JFrame {
 
+    private long prevTime;
     private BufferedImage heroImage;
     private long TIME_TICK = 1000 / 60;
     private Timer timer;
@@ -31,16 +32,13 @@ public class MainGameFrame extends JFrame {
             throw new IllegalArgumentException("Отсутствует карта");
         }
 
-        TileImageLoader loader = new TileImageLoader(new File("images.txt"));
-        loader.load();
-
         try {
             heroImage = ImageIO.read(new File("Images/hero.png"));
         } catch (IOException e) {
             throw new IllegalArgumentException("Отсутствует картинка");
         }
 
-        game = new Game(map,heroImage,loader);
+        game = new Game(map,heroImage);
 
         this.addKeyListener(new KeyboardListener());
 
@@ -54,18 +52,27 @@ public class MainGameFrame extends JFrame {
         this.setSize(windowWidth,windowHeight);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
+
+        prevTime = System.nanoTime();
     }
 
     public static void main(String[] args) {
+
+        TileImageLoader loader = new TileImageLoader(new File("images.txt"));
+        loader.load();
+
         MapReader reader = new MapReader(new File("map.txt"));
-        GameMap map = reader.read();
+        GameMap map = reader.read(loader);
         new MainGameFrame(map);
     }
 
 
     @Override
     public void paint(Graphics graphics){
-        game.paint(graphics);
+        long currentTime = System.nanoTime();
+        double deltaTime = (currentTime - prevTime) * 1.0 / 1000000000;
+        prevTime = currentTime;
+        game.draw(graphics, deltaTime);
     }
 
     class KeyboardListener extends KeyAdapter{

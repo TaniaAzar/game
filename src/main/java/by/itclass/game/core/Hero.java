@@ -1,9 +1,10 @@
 package by.itclass.game.core;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 
-public class Hero {
+public class Hero implements Drawable, Updatable{
 
     private double x; // координата персонажа
     private double y;
@@ -34,7 +35,7 @@ public class Hero {
         return image;
     }
 
-    public void move(double time){
+    private void move(double time){
 
         double delta = maxMovementSpeed * time;
 
@@ -88,5 +89,15 @@ public class Hero {
 
     public void setHorizontalMovement(byte horizontalMovement) {
         this.horizontalMovement = horizontalMovement;
+    }
+
+    @Override
+    public void draw(Graphics g, double deltaTime) {
+        g.drawImage(image,(int)x, (int)y, null);
+    }
+
+    @Override
+    public void update(double deltaTime) {
+        move(deltaTime);
     }
 }

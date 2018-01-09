@@ -1,7 +1,12 @@
 package by.itclass.game.core;
 
+import by.itclass.game.io.TileImageLoader;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
 //класс описывает поле, на котором происходит основное действие игры
-public class GameMap {
+public class GameMap implements Drawable {
 
     public final int CELL_WIDTH = 64; //ширина клетки в пикселях
     public final int CELL_HEIGHT = 64; //высотоа клетки в пикселях
@@ -10,11 +15,13 @@ public class GameMap {
     private int height; //высота поля в клетках
 
     private Cell[][] cells; //массив ячеек
+    private TileImageLoader loader;
 
-    public GameMap(int width, int height){
+    public GameMap(int width, int height, TileImageLoader loader){
         if (width <= 0 || height <= 0){
             throw new IllegalArgumentException("Неправильные размеры карты");
         }
+        this.loader = loader;
         this.width = width;
         this.height = height;
 
@@ -52,5 +59,16 @@ public class GameMap {
             throw new IllegalArgumentException("Отсутствует ячейка");
         }
         cells[i][j] = cell;
+    }
+
+    @Override
+    public void draw(Graphics g, double deltaTime) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                int type = cells[i][j].getType();
+                BufferedImage image = loader.getImage(type);
+                g.drawImage(image,j * CELL_WIDTH, i* CELL_HEIGHT, null);
+            }
+        }
     }
 }
