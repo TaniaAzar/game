@@ -6,49 +6,25 @@ import java.io.BufferedReader;
 
 public class Hero implements Drawable, Updatable{
 
+    private HeroType heroType;
     private double x; // координата персонажа
     private double y;
-    private BufferedImage image;//изображение персонажа
-
-    private final double SWIM_MODIFIER = 0.2;
-
     private byte verticalMovement;
     private byte horizontalMovement;
 
-    private int width;
-    private int height;
-
     private GameMap gameMap;
 
-    private float maxMovementSpeed;//максимальная скорость героя
-
-    public Hero(BufferedImage image, double x, double y, float maxMovementSpeed, GameMap map){
-        if(image == null){
-            throw new IllegalArgumentException("Изображение отсутствует");
-        }
-        if(maxMovementSpeed < 0){
-            throw new IllegalArgumentException("Скорость отсутствует");
+    public Hero(HeroType heroType, double x, double y, GameMap map){
+        if(heroType == null){
+            throw new IllegalArgumentException("Отсутствует тип героя");
         }
         if(map == null){
             throw new IllegalArgumentException("Карта отсутствует");
         }
-        this.image = image;
+        this.heroType = heroType;
         this.x = x;
         this.y = y;
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        this.maxMovementSpeed = maxMovementSpeed;
         this.gameMap = map;
-    }
-
-    public double getX() { return x; }
-
-    public double getY() {
-        return y;
-    }
-
-    public BufferedImage getImage() {
-        return image;
     }
 
     private void move(double time){
@@ -56,12 +32,12 @@ public class Hero implements Drawable, Updatable{
         double nextX = this.x;
         double nextY = this.y;
 
-        double centerX = this.x + width / 2;
-        double centerY = this.y + height / 2;
+        double centerX = this.x + heroType.getWidth() / 2;
+        double centerY = this.y + heroType.getHeight() / 2;
 
-        double speed = maxMovementSpeed;
+        double speed = heroType.getMaxMovementSpeed();
         if (checkPointIsSwimable(centerX,centerY)){
-            speed *= SWIM_MODIFIER;
+            speed *= heroType.getSwimFactor();
         }
 
         double delta = speed * time;
@@ -108,9 +84,9 @@ public class Hero implements Drawable, Updatable{
             }
         }
             double upY = nextY;
-            double downY = nextY + height;
+            double downY = nextY + heroType.getHeight();
             double leftX = nextX;
-            double rightX = nextX + width;
+            double rightX = nextX + heroType.getWidth();
 
             if((checkPointInMap(leftX, upY) && (checkPointIsWalkable(leftX, upY) || checkPointIsSwimable(leftX, upY))) &&
                     (checkPointInMap(rightX, upY) && (checkPointIsWalkable(rightX, upY) || checkPointIsSwimable(rightX, upY))) &&
@@ -125,13 +101,7 @@ public class Hero implements Drawable, Updatable{
         int j = (int)(x / gameMap.CELL_WIDTH);
         int i = (int)(y / gameMap.CELL_HEIGHT);
 
-        if (i < 0 || j < 0){
-            return false;
-        }
-        if (i >= gameMap.getWidth() || j >= gameMap.getHeight()){
-            return false;
-        }
-        return true;
+        return i >= 0 && j >= 0 && i < gameMap.getWidth() && j < gameMap.getHeight();
     }
 
     private boolean checkPointIsWalkable(double x, double y){
@@ -139,7 +109,7 @@ public class Hero implements Drawable, Updatable{
         int i = (int)(y / gameMap.CELL_HEIGHT);
 
         int type = gameMap.getCell(i, j).getType();
-        return gameMap.getType(type).isWalkable();
+        return gameMap.getType(type).isSwimmable() && heroType.isCanSwim();
     }
 
     private boolean checkPointIsSwimable(double x, double y) {
@@ -160,7 +130,7 @@ public class Hero implements Drawable, Updatable{
 
     @Override
     public void draw(Graphics g, double deltaTime) {
-        g.drawImage(image,(int)x, (int)y, null);
+        g.drawImage(heroType.getImage(),(int)x, (int)y, null);
     }
 
     @Override

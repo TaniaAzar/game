@@ -1,6 +1,7 @@
 package by.itclass.game.core;
 
 import by.itclass.game.core.commands.*;
+import by.itclass.game.io.HeroTypeLoader;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -16,13 +17,18 @@ public class Game implements Drawable,Updatable{
     private GameMap gameMap;
     private Hero hero;
     private Queue<Command> queue;
+    private HeroTypeLoader loader;
 
-    public Game(GameMap map, BufferedImage heroImage){
+    public Game(GameMap map, HeroTypeLoader loader){
         if (map == null){
             throw new IllegalArgumentException("Отсутствует карта");
         }
+        if (loader == null){
+            throw new IllegalArgumentException("Отсутствует информация о героях");
+        }
         this.gameMap = map;
-        this.hero = new Hero(heroImage,0,0,50, gameMap);
+        this.loader = loader;
+        this.hero = new Hero(loader.getHeroType(1),0,0,gameMap);
         this.queue = new LinkedList<>();
     }
 

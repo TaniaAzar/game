@@ -2,8 +2,10 @@ package by.itclass.game.gui;
 
 import by.itclass.game.core.Game;
 import by.itclass.game.core.GameMap;
+import by.itclass.game.core.HeroType;
 import by.itclass.game.core.commands.KeyboardPressCommand;
 import by.itclass.game.core.commands.KeyboardReleaseCommand;
+import by.itclass.game.io.HeroTypeLoader;
 import by.itclass.game.io.MapReader;
 import by.itclass.game.io.CellTypeLoader;
 
@@ -21,23 +23,20 @@ import java.util.Timer;
 public class MainGameFrame extends JFrame {
 
     private long prevTime;
-    private BufferedImage heroImage;
     private long TIME_TICK = 1000 / 100;
     private Timer timer;
     private Game game;
 
     public MainGameFrame(GameMap map){
+
+        HeroTypeLoader heroLoader = new HeroTypeLoader(new File("heroes.txt"));
+        heroLoader.load();
+
         if (map == null){
             throw new IllegalArgumentException("Отсутствует карта");
         }
 
-        try {
-            heroImage = ImageIO.read(new File("Images/hero.png"));
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Отсутствует картинка");
-        }
-
-        game = new Game(map,heroImage);
+        game = new Game(map,heroLoader);
 
         this.addKeyListener(new KeyboardListener());
 

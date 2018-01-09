@@ -1,0 +1,2 @@
+0,Images/hero.png,750,0.6,true
+1,Images/hero2.png,500,0.1,true
