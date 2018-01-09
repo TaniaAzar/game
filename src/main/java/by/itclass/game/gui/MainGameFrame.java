@@ -1,7 +1,10 @@
 package by.itclass.game.gui;
 
+import by.itclass.game.core.Game;
 import by.itclass.game.core.GameMap;
 import by.itclass.game.core.Hero;
+import by.itclass.game.core.commands.KeyboardPressCommand;
+import by.itclass.game.core.commands.KeyboardReleaseCommand;
 import by.itclass.game.io.MapReader;
 import by.itclass.game.io.TileImageLoader;
 
@@ -18,38 +21,34 @@ import java.util.Timer;
 
 public class MainGameFrame extends JFrame {
 
-    private GameMap gameMap;
-    private TileImageLoader loader;
-    private Hero hero;
     private BufferedImage heroImage;
-
     private long TIME_TICK = 1000 / 60;
     private Timer timer;
+    private Game game;
 
-    public MainGameFrame(GameMap gameMap){
-        if (gameMap == null){
+    public MainGameFrame(GameMap map){
+        if (map == null){
             throw new IllegalArgumentException("Отсутствует карта");
         }
 
-        loader = new TileImageLoader(new File("images.txt"));
+        TileImageLoader loader = new TileImageLoader(new File("images.txt"));
         loader.load();
-
-        this.gameMap = gameMap;
 
         try {
             heroImage = ImageIO.read(new File("Images/hero.png"));
         } catch (IOException e) {
             throw new IllegalArgumentException("Отсутствует картинка");
         }
-        this.hero = new Hero(heroImage,0,0,100);
+
+        game = new Game(map,heroImage,loader);
 
         this.addKeyListener(new KeyboardListener());
 
         timer = new Timer();
         timer.schedule(new GameTimer(),0,TIME_TICK);
 
-        int windowWidth = this.gameMap.getWidth() * this.gameMap.CELL_WIDTH;
-        int windowHeight = this.gameMap.getHeight() * this.gameMap.CELL_HEIGHT;
+        int windowWidth = game.getWidth();
+        int windowHeight = game.getHeight();
 
         this.setUndecorated(true);
         this.setSize(windowWidth,windowHeight);
@@ -63,53 +62,24 @@ public class MainGameFrame extends JFrame {
         new MainGameFrame(map);
     }
 
-    public void paint(Graphics g){
-        for (int i = 0; i < gameMap.getHeight(); i++) {
-            for (int j = 0; j < gameMap.getWidth(); j++) {
 
-                int type = gameMap.getCell(i, j).getType();
-
-                BufferedImage image = loader.getImage(type);
-                g.drawImage(image, j * gameMap.CELL_WIDTH, i * gameMap.CELL_HEIGHT, null);
-            }
-        }
-        g.drawImage(hero.getImage(), (int)hero.getX(), (int) hero.getY(),null);
+    @Override
+    public void paint(Graphics graphics){
+        game.paint(graphics);
     }
 
     class KeyboardListener extends KeyAdapter{
 
         @Override
         public void keyPressed(KeyEvent e) {
-            int key = e.getKeyCode();
-            switch (key){
-                case KeyEvent.VK_UP:
-                    hero.setVerticalMovement((byte)-1);
-                    break;
-                case KeyEvent.VK_DOWN:
-                    hero.setVerticalMovement((byte)1);
-                    break;
-                case KeyEvent.VK_LEFT:
-                    hero.setHorizontalMovement((byte)-1);
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    hero.setHorizontalMovement((byte)1);
-                    break;
-            }
+            KeyboardPressCommand pk = new KeyboardPressCommand(game, e.getKeyCode());
+            game.sendCommand(pk);
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-            int key = e.getKeyCode();
-            switch (key){
-                case KeyEvent.VK_UP:
-                case KeyEvent.VK_DOWN:
-                    hero.setVerticalMovement((byte)0);
-                    break;
-                case KeyEvent.VK_LEFT:
-                case KeyEvent.VK_RIGHT:
-                    hero.setHorizontalMovement((byte)0);
-                    break;
-            }
+            KeyboardReleaseCommand rc = new KeyboardReleaseCommand(game, e.getKeyCode());
+            game.sendCommand(rc);
         }
     }
 
@@ -124,9 +94,9 @@ public class MainGameFrame extends JFrame {
         @Override
         public void run() {
             long currentTime = System.nanoTime();
-            long deltaTime = currentTime - prevTime;
+            double deltaTime = (currentTime - prevTime) * 1.0 / 1000000000;
             prevTime = currentTime;
-            hero.move(deltaTime * 1.0 / 1000000000);
+            game.update(deltaTime);
             repaint();
         }
     }

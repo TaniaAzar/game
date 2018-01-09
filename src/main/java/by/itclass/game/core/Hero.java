@@ -1,6 +1,7 @@
 package by.itclass.game.core;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 
 public class Hero {
 
