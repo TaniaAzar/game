@@ -36,7 +36,7 @@ public class MainGameFrame extends JFrame {
         } catch (IOException e) {
             throw new IllegalArgumentException("Отсутствует картинка");
         }
-        this.hero = new Hero(heroImage,0,0);
+        this.hero = new Hero(heroImage,0,0,5);
 
         this.addKeyListener(new KeyboardListener());
 
@@ -75,19 +75,35 @@ public class MainGameFrame extends JFrame {
             int key = e.getKeyCode();
             switch (key){
                 case KeyEvent.VK_UP:
-                    hero.move(0, -5);
+                    hero.setVerticalMovement((byte)-1);
                     break;
                 case KeyEvent.VK_DOWN:
-                    hero.move(0,5);
+                    hero.setVerticalMovement((byte)1);
                     break;
                 case KeyEvent.VK_LEFT:
-                    hero.move(-5,0);
+                    hero.setHorizontalMovement((byte)-1);
                     break;
                 case KeyEvent.VK_RIGHT:
-                    hero.move(5,0);
+                    hero.setHorizontalMovement((byte)1);
                     break;
             }
+            hero.move();
             repaint();
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            int key = e.getKeyCode();
+            switch (key){
+                case KeyEvent.VK_UP:
+                case KeyEvent.VK_DOWN:
+                    hero.setVerticalMovement((byte)0);
+                    break;
+                case KeyEvent.VK_LEFT:
+                case KeyEvent.VK_RIGHT:
+                    hero.setHorizontalMovement((byte)0);
+                    break;
+            }
         }
     }
 
