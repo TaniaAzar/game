@@ -38,6 +38,14 @@ public class GameMap implements Drawable {
     public int getWidth(){return width;}
     public int getHeight(){return height;}
 
+    public int getPixelWidth(){
+        return width * CELL_WIDTH;
+    }
+
+    public int getPixelHeight(){
+        return height * CELL_HEIGHT;
+    }
+
     public Cell getCell(int i, int j){
         if (i < 0 || i >= height){
             throw new IllegalArgumentException("Неправильная i-координата");

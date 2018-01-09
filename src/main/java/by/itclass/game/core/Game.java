@@ -23,7 +23,7 @@ public class Game implements Drawable,Updatable{
             throw new IllegalArgumentException("Отсутствует карта");
         }
         this.gameMap = map;
-        this.hero = new Hero(heroImage,0,0,50);
+        this.hero = new Hero(heroImage,0,0,50, gameMap);
         this.queue = new LinkedList<>();
     }
 
