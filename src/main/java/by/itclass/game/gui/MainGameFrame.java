@@ -13,6 +13,8 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.TimerTask;
+import java.util.Timer;
 
 public class MainGameFrame extends JFrame {
 
@@ -20,6 +22,9 @@ public class MainGameFrame extends JFrame {
     private TileImageLoader loader;
     private Hero hero;
     private BufferedImage heroImage;
+
+    private long TIME_TICK = 1000 / 60;
+    private Timer timer;
 
     public MainGameFrame(GameMap gameMap){
         if (gameMap == null){
@@ -36,9 +41,12 @@ public class MainGameFrame extends JFrame {
         } catch (IOException e) {
             throw new IllegalArgumentException("Отсутствует картинка");
         }
-        this.hero = new Hero(heroImage,0,0,5);
+        this.hero = new Hero(heroImage,0,0,100);
 
         this.addKeyListener(new KeyboardListener());
+
+        timer = new Timer();
+        timer.schedule(new GameTimer(),0,TIME_TICK);
 
         int windowWidth = this.gameMap.getWidth() * this.gameMap.CELL_WIDTH;
         int windowHeight = this.gameMap.getHeight() * this.gameMap.CELL_HEIGHT;
@@ -87,8 +95,6 @@ public class MainGameFrame extends JFrame {
                     hero.setHorizontalMovement((byte)1);
                     break;
             }
-            hero.move();
-            repaint();
         }
 
         @Override
@@ -104,6 +110,24 @@ public class MainGameFrame extends JFrame {
                     hero.setHorizontalMovement((byte)0);
                     break;
             }
+        }
+    }
+
+    class GameTimer extends TimerTask{
+
+        long prevTime;
+
+        public GameTimer() {
+            prevTime = System.nanoTime();
+        }
+
+        @Override
+        public void run() {
+            long currentTime = System.nanoTime();
+            long deltaTime = currentTime - prevTime;
+            prevTime = currentTime;
+            hero.move(deltaTime * 1.0 / 1000000000);
+            repaint();
         }
     }
 

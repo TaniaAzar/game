@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 
 public class Hero {
 
-    private float x; // координата персонажа
-    private float y;
+    private double x; // координата персонажа
+    private double y;
     private BufferedImage image;//изображение персонажа
 
     private byte verticalMovement;
@@ -13,7 +13,7 @@ public class Hero {
 
     private float maxMovementSpeed;//максимальная скорость героя
 
-    public Hero(BufferedImage image, float x, float y, float maxMovementSpeed){
+    public Hero(BufferedImage image, double x, double y, float maxMovementSpeed){
         if(image == null){
             throw new IllegalArgumentException("Изображение отсутствует");
         }
@@ -23,9 +23,9 @@ public class Hero {
         this.maxMovementSpeed = maxMovementSpeed;
     }
 
-    public float getX() { return x; }
+    public double getX() { return x; }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 
@@ -33,46 +33,49 @@ public class Hero {
         return image;
     }
 
-    public void move(){
+    public void move(double time){
+
+        double delta = maxMovementSpeed * time;
+
         if (horizontalMovement == 0){
             switch (verticalMovement){
                 case -1:
-                    this.y -= maxMovementSpeed;
+                    this.y -= delta;
                     break;
                 case 1:
-                    this.y += maxMovementSpeed;
+                    this.y += delta;
                     break;
             }
         }else if (horizontalMovement == -1){
             switch (verticalMovement){
                 case -1:
-                    float diag = maxMovementSpeed * (float)Math.sqrt(2)/2;
+                    double diag = delta * Math.sqrt(2)/2;
                     this.x -= diag;
                     this.y -= diag;
                     break;
                 case 1:
-                    diag = maxMovementSpeed * (float)Math.sqrt(2)/2;
+                    diag = delta * Math.sqrt(2)/2;
                     this.x -= diag;
                     this.y += diag;
                     break;
                 case 0:
-                    this.x -= maxMovementSpeed;
+                    this.x -= delta;
                     break;
             }
         }else if (horizontalMovement == 1){
             switch (verticalMovement){
                 case -1:
-                    float diag = maxMovementSpeed * (float)Math.sqrt(2)/2;
+                    double diag = delta * Math.sqrt(2)/2;
                     this.x += diag;
                     this.y -= diag;
                     break;
                 case 1:
-                    diag = maxMovementSpeed * (float)Math.sqrt(2)/2;
+                    diag = delta * Math.sqrt(2)/2;
                     this.x += diag;
                     this.y += diag;
                     break;
                 case 0:
-                    this.x += maxMovementSpeed;
+                    this.x += delta;
                     break;
             }
         }
