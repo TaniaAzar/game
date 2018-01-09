@@ -89,8 +89,8 @@ public class Hero implements Drawable, Updatable{
                     break;
                 case 1:
                     diag = delta * Math.sqrt(2)/2;
-                    nextX = this.x + delta;
-                    nextY = this.y + delta;
+                    nextX = this.x + diag;
+                    nextY = this.y + diag;
                     break;
                 case 0:
                     nextX = this.x + delta;
