@@ -17,9 +17,7 @@ public class Hero {
         this.y = y;
     }
 
-    public float getX() {
-        return x;
-    }
+    public float getX() { return x; }
 
     public float getY() {
         return y;
@@ -27,5 +25,10 @@ public class Hero {
 
     public BufferedImage getImage() {
         return image;
+    }
+
+    public void move(float deltaX, float deltaY){
+        this.x += deltaX;
+        this.y += deltaY;
     }
 }
