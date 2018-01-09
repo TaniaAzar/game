@@ -99,11 +99,41 @@ public class Hero implements Drawable, Updatable{
         }
 
         if (nextX >= 0 && nextX < gameMap.getPixelWidth() - width){
-            this.x = nextX;
+            double upY = nextY;
+            double downY = nextY + height;
+            double leftX = nextX;
+            double rightX = nextX + width;
+
+            if((checkPointInMap(leftX, upY) && checkPointIsWalkable(leftX, upY)) &&
+                    (checkPointInMap(rightX, upY) && checkPointIsWalkable(rightX, upY)) &&
+                    (checkPointInMap(leftX, downY) && checkPointIsWalkable(leftX, downY)) &&
+                    (checkPointInMap(rightX, downY) && checkPointIsWalkable(rightX, downY))){
+                this.x = nextX;
+            }
         }
         if (nextY >= 0 && nextY < gameMap.getPixelHeight() - height){
             this.y = nextY;
         }
+    }
+
+    private boolean checkPointInMap(double x, double y){
+        int j = (int)(x / gameMap.CELL_WIDTH);
+        int i = (int)(y / gameMap.CELL_HEIGHT);
+
+        if (i < 0 || j < 0){
+            return false;
+        }
+        if (i >= gameMap.getWidth() || j >= gameMap.getHeight()){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkPointIsWalkable(double x, double y){
+        int j = (int)(x / gameMap.CELL_WIDTH);
+        int i = (int)(y / gameMap.CELL_HEIGHT);
+
+        return gameMap.getCell(i, j).isWalkable();
     }
 
     public void setVerticalMovement(byte verticalMovement) {

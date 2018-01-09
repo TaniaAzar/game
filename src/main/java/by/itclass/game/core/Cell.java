@@ -15,4 +15,8 @@ public class Cell {
     public int getType(){
         return type;
     }
+
+    public boolean isWalkable(){
+        return type < 2 || type > 4;
+    }
 }
