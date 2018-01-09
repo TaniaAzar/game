@@ -1,7 +1,6 @@
 package by.itclass.game.core;
 
 import by.itclass.game.core.commands.*;
-import by.itclass.game.io.TileImageLoader;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

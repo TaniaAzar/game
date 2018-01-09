@@ -2,11 +2,10 @@ package by.itclass.game.gui;
 
 import by.itclass.game.core.Game;
 import by.itclass.game.core.GameMap;
-import by.itclass.game.core.Hero;
 import by.itclass.game.core.commands.KeyboardPressCommand;
 import by.itclass.game.core.commands.KeyboardReleaseCommand;
 import by.itclass.game.io.MapReader;
-import by.itclass.game.io.TileImageLoader;
+import by.itclass.game.io.CellTypeLoader;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -58,7 +57,7 @@ public class MainGameFrame extends JFrame {
 
     public static void main(String[] args) {
 
-        TileImageLoader loader = new TileImageLoader(new File("images.txt"));
+        CellTypeLoader loader = new CellTypeLoader(new File("images.txt"));
         loader.load();
 
         MapReader reader = new MapReader(new File("map.txt"));

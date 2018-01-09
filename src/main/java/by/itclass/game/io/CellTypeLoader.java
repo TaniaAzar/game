@@ -1,18 +1,20 @@
 package by.itclass.game.io;
 
+import by.itclass.game.core.CellType;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-//класс загрузки картинок для игрового поля
-public class TileImageLoader {
+//класс загрузки ячеек для игрового поля
+public class CellTypeLoader {
 
     public File listFile;
-    private Map<Integer,BufferedImage> imageMap;
+    private Map<Integer, CellType> cellTypeMap;
 
-    public TileImageLoader(File listFile){
+    public CellTypeLoader(File listFile){
         if (listFile == null){
             throw new IllegalArgumentException("Файл с картинками отсутствует");
         }
@@ -20,7 +22,7 @@ public class TileImageLoader {
             throw new IllegalArgumentException("Файда не существует или является папкой");
         }
         this.listFile = listFile;
-        this.imageMap = new HashMap<>();
+        this.cellTypeMap = new HashMap<>();
     }
 
     public void load(){
@@ -36,7 +38,12 @@ public class TileImageLoader {
                 String path = info[1];
 
                 BufferedImage image = ImageIO.read(new File(path));
-                imageMap.put(type,image);
+                Boolean walkable = Boolean.parseBoolean(info[2]);
+                Boolean swimmable = Boolean.parseBoolean(info[3]);
+
+                CellType cellType = new CellType(swimmable,walkable,image);
+
+                cellTypeMap.put(type, cellType);
 
                 line = bufferedReader.readLine();
             }
@@ -46,10 +53,10 @@ public class TileImageLoader {
         }
     }
 
-    public BufferedImage getImage(int type){
+    public CellType getCellType(int type){
         if (type < 0){
             throw new IllegalArgumentException("Неверный тип картинки");
         }
-        return imageMap.get(type);
+        return cellTypeMap.get(type);
     }
 }

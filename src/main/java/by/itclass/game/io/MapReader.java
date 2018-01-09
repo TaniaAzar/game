@@ -20,7 +20,7 @@ public class MapReader {
         this.file = file;
     }
 
-    public GameMap read(TileImageLoader loader){
+    public GameMap read(CellTypeLoader loader){
 
         GameMap gameMap;
         try {

@@ -12,11 +12,7 @@ public class Cell {
         this.type = type;
     }
 
-    public int getType(){
+    public int getType() {
         return type;
-    }
-
-    public boolean isWalkable(){
-        return type < 2 || type > 4;
     }
 }

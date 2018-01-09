@@ -133,7 +133,8 @@ public class Hero implements Drawable, Updatable{
         int j = (int)(x / gameMap.CELL_WIDTH);
         int i = (int)(y / gameMap.CELL_HEIGHT);
 
-        return gameMap.getCell(i, j).isWalkable();
+        int type = gameMap.getCell(i, j).getType();
+        return gameMap.getType(type).isWalkable() || gameMap.getType(type).isSwimmable();
     }
 
     public void setVerticalMovement(byte verticalMovement) {
